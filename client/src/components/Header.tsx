@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { useGoogleLogin } from "@react-oauth/google";
-import { colors } from "../colors";
+import { colors } from "../branding";
 import { ApiEndpoints, useApiEndpoint, useUser } from "../Context";
 
 const HeaderContainer = styled.div`
@@ -30,7 +30,7 @@ function LoginButton() {
 	const googleLogin = useGoogleLogin({
 		flow: "auth-code",
 		onSuccess: async (codeResponse) => {
-			const tokenResp = await fetch(`${apiEndpoint}/auth/google`, {
+			const tokenResp = await fetch(`${apiEndpoint.http}/auth/google`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -82,7 +82,9 @@ export default function Header() {
 					color: colors.textSecondary,
 				}}
 			>
-				<span css={{ fontSize: ".8em" }}>by</span> Lavender Snake
+				<span css={{ fontSize: ".8em", position: "relative", left: "19px" }}>
+					by Lavender Snake
+				</span>
 			</div>
 			<Spacer />
 			<LoginButton />

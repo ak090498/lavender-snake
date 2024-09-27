@@ -1,7 +1,8 @@
-import { useTodos, useUser } from "../Context";
+import { useTodos } from "@/todo/TodoContextProvider";
+import { useUser } from "@/Context";
 import styled from "@emotion/styled";
 import TodoEntry from "./TodoEntry";
-import { colors } from "../colors";
+import { colors } from "@/branding";
 
 const TodoContainer = styled.div`
 	display: flex;
@@ -99,7 +100,7 @@ export function TodoList(props: InputProps) {
 
 	return (
 		<TodoContainer>
-			<TodoListHeader>Welcome, {user.given_name}!</TodoListHeader>
+			<TodoListHeader>Welcome, {user.userData.name}!</TodoListHeader>
 			<AddItem
 				inputValue={props.inputValue}
 				handleInput={props.handleInput}

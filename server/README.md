@@ -1,10 +1,62 @@
-This is the express server! It is mostly just boilerplate, but for now I added a count controller. To run, execute:
-`npm install && DEBUG=server:* npm start`
+# Backend
 
-(the install can be omitted if you don't have anything that needs install).
+To run dev server:
 
-note: this will _not_ hot reload; if you change something on the server, you will need to stop and restart. Not sure if this is something that can be fixed or not.
+```
+npm run dev
+```
 
-## Hot Reload Works Now
+## Authentication docs
 
-Make sure to run `npm install` first, then type `npm run dev` on your terminal.
+For frontend:
+
+- To register a user, send a POST request to `/user/signup` with request body in this format:
+  ```json
+  {
+    "email": "alice@dummy.com",
+    "password": "alice123",
+    "username": "Alice"
+  }
+  ```
+- To login a user, send a POST request to `/user/login` with request body in this format:
+  ```json
+  {
+    "email": "bob@dummy.com",
+    "password": "bob123"
+  }
+  ```
+- Both endpoints will return data in this format:
+  ```json
+  {
+    "id": "bobid",
+    "name": "Bob",
+    "picture": "https://robohash.org/Bob",
+    "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImJvYmlkIiwiaWF0IjoxNjc5MTQ2MTU0fQ.c0N0BqMXndH7iQDa8kNtUPy349aRjOzCxRMRbJKeoFI"
+  }
+  ```
+- To access a protected route, make sure to send the auth_token in request header prefixed with 'Bearer'
+  ```
+  authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJvYiIsImlhdCI6MTY3OTEzNjE4Nn0.3TZKiauRcTErc9w6xRkMoLCdGn7Ojbo3_jLU0MB-uTE'
+  ```
+
+For backend:
+
+- To mark a route as protected, simply add the hook `server.authenticate`.
+  ```ts
+  // example of a protected route
+  server.get('/', { onRequest: [server.authenticate] }, async (req, reply) => {
+    reply.send({ message: 'hello from protected route' })
+  })
+  ```
+- On protected route, you can get the authenticated user's id with `req.user`
+  ```ts
+  // on protected route (specifically, after server.authenticate run)
+  console.log(req.user) // return { id: 'a6786295-7061-4fa3-9be2-6dd8515078e6', iat: 1679146966 }
+  ```
+- With the id, you can search for the user's detail from db
+
+Note: if you need api credentials, put them into .env, in the format
+
+> SOME_API_KEY=xxxx-xxxxx-xxxxxxxx
+
+This will be loaded via dotenv and allow local access to remote APIs guarded by secrets
